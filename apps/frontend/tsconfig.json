@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,16 +15,30 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./*"],
-      "@repo/server/*": ["../../apps/server/*"],
-      "@repo/ecs-tasks/*": ["../../apps/ecs-tasks/*"],
-      "@repo/trigger-api/*": ["../../apps/trigger-api/*"],
-      "@repo/ui/*": ["../../packages/ui/*"],
-      "@repo/lib/*": ["../../packages/ui/src/lib/*"],
-      "@repo/db/*": ["../../packages/db/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@repo/server/*": [
+        "../../apps/server/*"
+      ],
+      "@repo/ecs-tasks/*": [
+        "../../apps/ecs-tasks/*"
+      ],
+      "@repo/trigger-api/*": [
+        "../../apps/trigger-api/*"
+      ],
+      "@repo/ui/*": [
+        "../../packages/ui/*"
+      ],
+      "@repo/lib/*": [
+        "../../packages/ui/src/lib/*"
+      ],
+      "@repo/db/*": [
+        "../../packages/db/*"
+      ]
     },
     "plugins": [
       {
@@ -33,7 +51,8 @@
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
