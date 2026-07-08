@@ -161,7 +161,7 @@ export const LoginForm = () => {
                             aria-label="Login with demo account"
                         >
                             {/* you can replace text with an icon if your Button supports it */}
-                            Use demo account — x@gmail.com
+                            Use demo account — TestUser@gmail.com
                         </Button>
                     </div>
 
