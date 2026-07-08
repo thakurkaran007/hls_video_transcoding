@@ -19,7 +19,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const response: any = await axios.get(
-       "https://backend.thakurkaran.com/api/v1/videos/getAllVideos",
+       "https://primary.thakurkaran.com/api/v1/videos/getAllVideos",
         { withCredentials: true }
       );
 
