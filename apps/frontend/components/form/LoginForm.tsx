@@ -38,7 +38,7 @@ export const LoginForm = () => {
 
     const sendCookie = async (data: LoginInput) => {
         try {
-            const res: any = await axios.post("https://backend.thakurkaran.com/api/v1/users/signin", data, { withCredentials: true });
+            const res: any = await axios.post("https://primary.thakurkaran.com/api/v1/users/signin", data, { withCredentials: true });
             console.log("Response from server:", res);
             if (res.status === 200) {
                 console.log("Cookie sent successfully");
