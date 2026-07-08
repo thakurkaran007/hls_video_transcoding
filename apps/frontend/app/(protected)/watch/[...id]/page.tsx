@@ -57,7 +57,7 @@ const WatchPage = () => {
         }
         
         const res = await axios.get<{ data: { video: VideoType } }>(
-          `https://backend.thakurkaran.com/api/v1/videos/${id}`,
+          `https://primary.thakurkaran.com/api/v1/videos/${id}`,
           { withCredentials: true }
         );
         setVideo(res.data.data.video);
