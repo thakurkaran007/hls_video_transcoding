@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
-import { decrementKey, dequeueJobFromQueue, enqueueJobInQueue, getKey, getQueueLength, incrementKey, setKey } from '../redis/index.js';
 import { REDIS_KEYS, VIDEO_PROGRESS_STATUS } from '@prisma/client';
 import { db } from '../db.js';
 import * as z from 'zod';
 import type { ECSRequestBody, jobConfigSchema } from '../types/index.js';
 import triggerTranscodingJob from '../utils/transcoder_ecs.js';
+import { redisClient } from '../redis/index.js';
 
 export const handleS3Trigger = async (req: Request, res: Response) => {
 
@@ -19,7 +19,7 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
         const key = s3EventData.key;
         const metadata = s3EventData.metadata || {};
 
-        const currentJobCount = parseInt(await getKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT) || '0');
+        const currentJobCount = parseInt(await redisClient.getKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT) || '0');
         const filename = key.split('/').pop().split('.')[0];
 
         let video = await db.video.findUnique({
@@ -48,7 +48,7 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
         
         if (currentJobCount < 5) {
             console.log("Starting transcoding job immediately for:", filename);
-            await incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
+            await redisClient.incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
 
             const job: z.infer<typeof jobConfigSchema> = {
                 filename,
@@ -77,7 +77,7 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
                 progress: VIDEO_PROGRESS_STATUS.QUEUED,
             }
             
-            await enqueueJobInQueue(job);
+            await redisClient.enqueueJobInQueue(job);
             console.log(`Transcoding job queued for ${filename}!`);
 
             await db.video.update({
@@ -128,14 +128,14 @@ export const handleECSTrigger = async (req: Request, res: Response) => {
             }
         });
         console.log(`Updated video record for ${X.objectKey} with progress ${X.progress} \n --- decrementing job count ---`);
-        await decrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
+        await redisClient.decrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
 
-        const currentJobCount = parseInt(await getKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT) || '0');
-        const queueLength = await getQueueLength();
+        const currentJobCount = parseInt(await redisClient.getKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT) || '0');
+        const queueLength = await redisClient.getQueueLength();
 
         if (queueLength == 0) {
             if (currentJobCount > 0) {
-                await setKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT, '0');
+                await redisClient.setKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT, '0');
             }
             return res.status(200).json({ message: 'Trigger from ECS: Q is Empty' });
         }
@@ -144,7 +144,7 @@ export const handleECSTrigger = async (req: Request, res: Response) => {
         console.log(`Available slots for processing: ${availableSlots}`);
 
         for (let i = 0; i < availableSlots; i++) {
-            const job = await dequeueJobFromQueue();
+            const job = await redisClient.dequeueJobFromQueue();
 
             if (!job) {
                 break;
@@ -161,7 +161,7 @@ export const handleECSTrigger = async (req: Request, res: Response) => {
                 }
             });
 
-            await incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
+            await redisClient.incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
 
             await triggerTranscodingJob(job);
 

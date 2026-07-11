@@ -1,6 +1,6 @@
 const { S3Client, CopyObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { DynamoDBClient, GetItemCommand } = require("@aws-sdk/client-dynamodb");
-const axios = require("axios");
+const axios = require("../server/node_modules/axios/index.d.cts");
 
 const s3 = new S3Client({ 
   region: process.env.MY_AWS_REGION,
@@ -56,18 +56,18 @@ exports.handler = async (event) => {
         TableName: process.env.DDB_TABLE_NAME,
         Key: { pk: { S: cleaned } },
       });
-      const res = await ddb.send(getCmd);
+      // const res = await ddb.send(getCmd);
       
-      if (res.Item) {
-        metadata = {
-          userId: res.Item.userId.S,
-          title: res.Item.title.S,
-          description: res.Item.description.S,
-        };
-        console.log("Fetched metadata from DynamoDB:", metadata);
-      } else {
-        console.warn("No metadata found in DynamoDB for key:", cleaned);
-      }
+      // if (res.Item) {
+      //   metadata = {
+      //     userId: res.Item.userId.S,
+      //     title: res.Item.title.S,
+      //     description: res.Item.description.S,
+      //   };
+      //   console.log("Fetched metadata from DynamoDB:", metadata);
+      // } else {
+      //   console.warn("No metadata found in DynamoDB for key:", cleaned);
+      // }
     } catch (e) {
       console.warn("DynamoDB lookup failed:", e.message);
     }

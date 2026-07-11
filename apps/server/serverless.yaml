@@ -1,5 +1,5 @@
 service: video-transcoder-server
-frameworkVersion: "3"
+frameworkVersion: "4"
 
 provider:
   name: aws
@@ -51,7 +51,3 @@ functions:
     timeout: 20   # seconds (default is 6)
     events:
       - httpApi: "*"
-    vpc:
-      subnetIds: 
-        - subnet-0a3c2b11d2d75e66a
-        - subnet-0e5bbf8699e2e9eff

@@ -28,7 +28,7 @@ async function triggerTranscodingJob(job: z.infer<typeof jobConfigSchema>) {
             networkConfiguration: {
                 awsvpcConfiguration: {
                     subnets: listOfSubnets,
-                    assignPublicIp: "DISABLED",  
+                    assignPublicIp: "ENABLED",  
                 }
             },
             overrides: {

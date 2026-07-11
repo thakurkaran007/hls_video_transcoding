@@ -13,7 +13,9 @@ WORKDIR /app
 COPY package*.json .
 RUN npm install
 
+COPY .env .env
 COPY dist/utils/ utils/
 COPY dist/index.js index.js
+
 
 CMD ["node", "index.js"]
